@@ -1,0 +1,123 @@
+# Build function package with dependencies included using Docker
+resource "null_resource" "lambda_dependencies" {
+  triggers = {
+    requirements = filemd5("${path.module}/requirements.txt")
+    source_code  = filemd5("${path.module}/src/app.py")
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      cd ${path.module}
+      rm -rf lambda_package chunk_sop.zip
+      mkdir -p lambda_package
+      
+      # Install dependencies using Docker to ensure Linux compatibility
+      docker run --rm \
+        -v "$(pwd):/var/task" \
+        -w /var/task \
+        python:3.13-slim \
+        bash -c "pip install -r requirements.txt -t lambda_package/"
+      
+      # Copy source code
+      cp -r src/* lambda_package/
+      
+      # Clean up unnecessary files to reduce size
+      find lambda_package -name "*.pyc" -delete 2>/dev/null || true
+      find lambda_package -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+      find lambda_package -name "*.dist-info" -type d -exec rm -rf {} + 2>/dev/null || true
+      find lambda_package -name "tests" -type d -exec rm -rf {} + 2>/dev/null || true
+    EOT
+  }
+}
+
+data "archive_file" "lambda" {
+  type        = "zip"
+  source_dir  = "${path.module}/lambda_package"
+  output_path = "${path.module}/chunk_sop.zip"
+  depends_on  = [null_resource.lambda_dependencies]
+  excludes = [
+    "__pycache__",
+    "*.pyc",
+    "*.pyo",
+    "*.dist-info",
+    "tests"
+  ]
+}
+
+resource "aws_lambda_function" "chunk_sop" {
+  function_name = "${var.prefix}-vectorization-chunk-and-embed"
+  role          = aws_iam_role.lambda_exec.arn
+  handler       = "app.lambda_handler"
+  runtime       = "python3.13"
+  timeout       = 60
+  memory_size   = 512
+  filename      = data.archive_file.lambda.output_path
+  source_code_hash = data.archive_file.lambda.output_base64sha256
+
+  environment {
+   variables = var.environment_variables
+  }
+
+  tags = {
+    Environment = var.environment
+    Name     = "AI-KB"
+  }
+}
+
+resource "aws_iam_role" "lambda_exec" {
+  name = "${var.prefix}-vectorization-chunk-embed-role"
+
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+
+  tags = {
+    Environment = var.environment
+    Project     = "AI-KB"
+  }
+}
+
+data "aws_iam_policy_document" "lambda_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_basic" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "s3_read" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+}
+
+resource "aws_iam_policy" "bedrock_policy" {
+  name = "${var.prefix}-bedrock-embed-access"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "bedrock:InvokeModel"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+
+  tags = {
+    Environment = var.environment
+    Project     = "AI-KB"
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "bedrock_attach" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = aws_iam_policy.bedrock_policy.arn
+}

@@ -1,0 +1,329 @@
+# iac/modules/lambda/backend/pre-formatting/text_extraction/main.tf
+locals {
+  pdf_lambda_name    = "${var.prefix}-pdf_text_extraction"
+  office_lambda_name = "${var.prefix}-office_text_extraction"
+  tags = {
+    Environment = var.environment
+    Name        = "AI-KB"
+  }
+}
+
+# --- ECR Repository for PDF Lambda Docker Image ---
+resource "aws_ecr_repository" "pdf_lambda_image_repo" {
+  name                 = "${var.prefix}-pdf-text-extraction-lambda"
+  image_tag_mutability = "MUTABLE"
+  force_delete         = true
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+  tags = local.tags
+}
+
+resource "aws_ecr_lifecycle_policy" "pdf_keep_recent" {
+  repository = aws_ecr_repository.pdf_lambda_image_repo.name
+  policy = jsonencode({
+    rules = [{
+      rulePriority = 1
+      description  = "Keep last 30 images"
+      selection = {
+        tagStatus   = "any"
+        countType   = "imageCountMoreThan"
+        countNumber = 30
+      }
+      action = { type = "expire" }
+    }]
+  })
+}
+
+# --- ECR Repository for Office Lambda Docker Image ---
+resource "aws_ecr_repository" "office_lambda_image_repo" {
+  name                 = "${var.prefix}-office-text-extraction-lambda"
+  image_tag_mutability = "MUTABLE"
+  force_delete         = true
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+  tags = local.tags
+}
+
+resource "aws_ecr_lifecycle_policy" "office_keep_recent" {
+  repository = aws_ecr_repository.office_lambda_image_repo.name
+  policy = jsonencode({
+    rules = [{
+      rulePriority = 1
+      description  = "Keep last 30 images"
+      selection = {
+        tagStatus   = "any"
+        countType   = "imageCountMoreThan"
+        countNumber = 30
+      }
+      action = { type = "expire" }
+    }]
+  })
+}
+
+# ------------------------------------------------
+# Build & push PDF Lambda Docker image
+# ------------------------------------------------
+resource "null_resource" "build_and_push_pdf_docker_image" {
+  triggers = {
+    repo_url         = aws_ecr_repository.pdf_lambda_image_repo.repository_url
+    dockerfile_md5   = filemd5("${path.module}/${var.pdf_docker_context_relpath}/Dockerfile")
+    requirements_md5 = fileexists("${path.module}/${var.pdf_docker_context_relpath}/requirements.txt") ? filemd5("${path.module}/${var.pdf_docker_context_relpath}/requirements.txt") : "none"
+    app_py_md5       = fileexists("${path.module}/${var.pdf_docker_context_relpath}/lambda_pdf_extractor.py") ? filemd5("${path.module}/${var.pdf_docker_context_relpath}/lambda_pdf_extractor.py") : "none"
+    tag              = var.image_tag
+    region           = var.REGION
+  }
+
+  provisioner "local-exec" {
+    working_dir = "${path.module}/${var.pdf_docker_context_relpath}"
+    interpreter = ["/bin/bash", "-c"]
+    command = <<-EOT
+      set -euo pipefail
+      aws ecr get-login-password --region ${var.aws_region} \
+        | docker login --username AWS --password-stdin ${aws_ecr_repository.pdf_lambda_image_repo.repository_url}
+      docker buildx version >/dev/null 2>&1 || { echo "docker buildx not available"; exit 1; }
+      docker buildx create --use >/dev/null 2>&1 || true
+      docker buildx build \
+        --platform=linux/amd64 \
+        --provenance=false \
+        --sbom=false \
+        --output=type=registry,oci-mediatypes=false \
+        -t ${aws_ecr_repository.pdf_lambda_image_repo.repository_url}:${var.image_tag} \
+        --push .
+    EOT
+  }
+
+  depends_on = [
+    aws_ecr_repository.pdf_lambda_image_repo,
+    aws_ecr_lifecycle_policy.pdf_keep_recent
+  ]
+}
+
+# ------------------------------------------------
+# Build & push Office Lambda Docker image
+# ------------------------------------------------
+resource "null_resource" "build_and_push_office_docker_image" {
+  triggers = {
+    repo_url         = aws_ecr_repository.office_lambda_image_repo.repository_url
+    dockerfile_md5   = filemd5("${path.module}/${var.office_docker_context_relpath}/Dockerfile")
+    requirements_md5 = fileexists("${path.module}/${var.office_docker_context_relpath}/requirements.txt") ? filemd5("${path.module}/${var.office_docker_context_relpath}/requirements.txt") : "none"
+    app_py_md5       = fileexists("${path.module}/${var.office_docker_context_relpath}/lambda_office_extractor.py") ? filemd5("${path.module}/${var.office_docker_context_relpath}/lambda_office_extractor.py") : "none"
+    tag              = var.image_tag
+    region           = var.REGION
+  }
+
+  provisioner "local-exec" {
+    working_dir = "${path.module}/${var.office_docker_context_relpath}"
+    interpreter = ["/bin/bash", "-c"]
+    command = <<-EOT
+      set -euo pipefail
+      aws ecr get-login-password --region ${var.aws_region} \
+        | docker login --username AWS --password-stdin ${aws_ecr_repository.office_lambda_image_repo.repository_url}
+      docker buildx version >/dev/null 2>&1 || { echo "docker buildx not available"; exit 1; }
+      docker buildx create --use >/dev/null 2>&1 || true
+      docker buildx build \
+        --platform=linux/amd64 \
+        --provenance=false \
+        --sbom=false \
+        --output=type=registry,oci-mediatypes=false \
+        -t ${aws_ecr_repository.office_lambda_image_repo.repository_url}:${var.image_tag} \
+        --push .
+    EOT
+  }
+
+  depends_on = [
+    aws_ecr_repository.office_lambda_image_repo,
+    aws_ecr_lifecycle_policy.office_keep_recent
+  ]
+}
+
+# Get pushed image data for PDF
+data "aws_ecr_image" "pdf_pushed" {
+  repository_name = aws_ecr_repository.pdf_lambda_image_repo.name
+  image_tag       = var.image_tag
+  depends_on      = [null_resource.build_and_push_pdf_docker_image]
+}
+
+# Get pushed image data for Office
+data "aws_ecr_image" "office_pushed" {
+  repository_name = aws_ecr_repository.office_lambda_image_repo.name
+  image_tag       = var.image_tag
+  depends_on      = [null_resource.build_and_push_office_docker_image]
+}
+
+# --- PDF Lambda Function ---
+resource "aws_lambda_function" "pdf_text_extraction" {
+  function_name = "${var.prefix}-preformat-pdf-text-extraction"
+  role          = aws_iam_role.pdf_lambda_exec.arn
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.pdf_lambda_image_repo.repository_url}@${data.aws_ecr_image.pdf_pushed.image_digest}"
+  timeout       = 900  # 15 minutes for PDF processing
+  memory_size   = 3008 # Higher memory for PDF processing
+  architectures = ["x86_64"]
+
+  environment {
+    variables = merge(var.environment_vars, {
+      EXTRACTED_TEXT_BUCKET = "${var.prefix}-text-extraction"
+    })
+  }
+
+  tags = local.tags
+
+  depends_on = [
+    null_resource.build_and_push_pdf_docker_image,
+    aws_iam_role_policy_attachment.pdf_lambda_basic,
+    aws_iam_role_policy_attachment.pdf_s3_bucket_access,
+    aws_iam_role_policy_attachment.pdf_textract_access
+  ]
+}
+
+# --- Office Lambda Function ---
+resource "aws_lambda_function" "office_text_extraction" {
+  function_name = "${var.prefix}-preformat-office-text-extraction"
+  role          = aws_iam_role.office_lambda_exec.arn
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.office_lambda_image_repo.repository_url}@${data.aws_ecr_image.office_pushed.image_digest}"
+  timeout       = 900  # 15 minutes for office processing
+  memory_size   = 3008 # Higher memory for office processing
+  architectures = ["x86_64"]
+
+  environment {
+    variables = merge(var.environment_vars, {
+      EXTRACTED_TEXT_BUCKET = "${var.prefix}-text-extraction"
+    })
+  }
+
+  tags = local.tags
+
+  depends_on = [
+    null_resource.build_and_push_office_docker_image,
+    aws_iam_role_policy_attachment.office_lambda_basic,
+    aws_iam_role_policy_attachment.office_s3_bucket_access
+  ]
+}
+
+# --- IAM Role for PDF Lambda ---
+resource "aws_iam_role" "pdf_lambda_exec" {
+  name               = "${var.prefix}-preformat-pdf-text-extraction-role"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+  tags               = local.tags
+}
+
+# --- IAM Role for Office Lambda ---
+resource "aws_iam_role" "office_lambda_exec" {
+  name               = "${var.prefix}-preformat-office-text-extraction-role"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+  tags               = local.tags
+}
+
+data "aws_iam_policy_document" "lambda_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
+}
+
+# --- S3 Policy (shared between both lambdas) ---
+resource "aws_iam_policy" "s3_bucket_policy" {
+  name        = "${var.prefix}-text-extraction-s3-bucket-policy"
+  description = "Policy for S3 bucket read and write access for text extraction"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:GetObjectVersion"
+        ]
+        Resource = [
+          "arn:aws:s3:::${var.prefix}-raw-sop-upload/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "arn:aws:s3:::${var.prefix}-raw-sop-upload"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:PutObjectAcl"
+        ]
+        Resource = [
+          "arn:aws:s3:::${var.prefix}-text-extraction/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "arn:aws:s3:::${var.prefix}-text-extraction"
+        ]
+      }
+    ]
+  })
+  tags = local.tags
+}
+
+# --- Textract Policy (only for PDF Lambda) ---
+resource "aws_iam_policy" "textract_policy" {
+  name        = "${var.prefix}-textract-policy"
+  description = "Policy for Textract document text detection"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "textract:DetectDocumentText",
+          "textract:AnalyzeDocument"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+  tags = local.tags
+}
+
+# --- PDF Lambda IAM Attachments ---
+resource "aws_iam_role_policy_attachment" "pdf_lambda_basic" {
+  role       = aws_iam_role.pdf_lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "pdf_s3_bucket_access" {
+  role       = aws_iam_role.pdf_lambda_exec.name
+  policy_arn = aws_iam_policy.s3_bucket_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "pdf_textract_access" {
+  role       = aws_iam_role.pdf_lambda_exec.name
+  policy_arn = aws_iam_policy.textract_policy.arn
+}
+
+# --- Office Lambda IAM Attachments ---
+resource "aws_iam_role_policy_attachment" "office_lambda_basic" {
+  role       = aws_iam_role.office_lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "office_s3_bucket_access" {
+  role       = aws_iam_role.office_lambda_exec.name
+  policy_arn = aws_iam_policy.s3_bucket_policy.arn
+}

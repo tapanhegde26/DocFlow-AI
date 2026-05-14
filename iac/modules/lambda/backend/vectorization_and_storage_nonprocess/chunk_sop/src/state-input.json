@@ -1,0 +1,513 @@
+{
+  "success": true,
+  "content": {
+    "metadata": {
+      "process_uuid": "e835d3df-067e-4802-8fa4-23f24ec762a8",
+      "process_id": "non_distinct_process_1",
+      "process_name": "Non-distinct Process 1",
+      "process_type": "non_distinct",
+      "created_timestamp": "2025-10-10T16:14:14.249507",
+      "client_name": "conserve-two",
+      "provider_name": "conserve-two",
+      "timestamp_text_extraction": "2025-10-10T16:12:31.775055",
+      "timestamp_text_standardization": "2025-10-10T16:12:32.883479",
+      "timestamp_semantic_chunking": "2025-10-10T16:12:33.934458",
+      "timestamp_identify_processes": "",
+      "timestamp_create_process_docs": "2025-10-10T16:14:13.938595",
+      "source_file": {
+        "original_filename": "s3://wed-tsh-industries-raw-sop-upload/raw_files/conserve-two/RareBeauty-Brand83.pdf",
+        "file_type": "pdf",
+        "s3_bucket": "wed-tsh-industries-text-extraction",
+        "s3_key": "non_distinct_processes/conserve-two/20251010_161412_1d52900d_unknown_file_non_distinct_processes.json"
+      },
+      "processing_info": {
+        "extraction_method": "automated_non_distinct",
+        "chunking_method": "semantic",
+        "identification_method": "bedrock_claude_non_distinct"
+      }
+    },
+    "process_details": {
+      "name": "Non-distinct Process 1",
+      "description": "",
+      "category": "non_distinct",
+      "process_type": "non_distinct",
+      "steps": [],
+      "client_name": "conserve-two",
+      "provider_name": "conserve-two",
+      "timestamp_text_extraction": "2025-10-10T16:12:31.775055",
+      "timestamp_text_standardization": "2025-10-10T16:12:32.883479",
+      "timestamp_semantic_chunking": "2025-10-10T16:12:33.934458",
+      "timestamp_identify_processes": "",
+      "timestamp_create_process_docs": "2025-10-10T16:14:13.938595",
+      "location_info": {
+        "section_location": "",
+        "location": "",
+        "organization_pattern": "sequential"
+      },
+      "related_pages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        147
+      ],
+      "image_references": [
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_1_img_1.png",
+          "page": 1,
+          "description": "Image from page 1"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_1_img_2.png",
+          "page": 1,
+          "description": "Image from page 1"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_4_img_2.jpeg",
+          "page": 4,
+          "description": "Image from page 4"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_15_img_2.jpeg",
+          "page": 15,
+          "description": "Image from page 15"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_15_img_3.jpeg",
+          "page": 15,
+          "description": "Image from page 15"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_15_img_4.jpeg",
+          "page": 15,
+          "description": "Image from page 15"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_36_img_2.png",
+          "page": 36,
+          "description": "Image from page 36"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_37_img_2.jpeg",
+          "page": 37,
+          "description": "Image from page 37"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_38_img_2.png",
+          "page": 38,
+          "description": "Image from page 38"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_39_img_2.jpeg",
+          "page": 39,
+          "description": "Image from page 39"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_40_img_2.jpeg",
+          "page": 40,
+          "description": "Image from page 40"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_41_img_2.png",
+          "page": 41,
+          "description": "Image from page 41"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_42_img_2.jpeg",
+          "page": 42,
+          "description": "Image from page 42"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_43_img_2.jpeg",
+          "page": 43,
+          "description": "Image from page 43"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_44_img_2.jpeg",
+          "page": 44,
+          "description": "Image from page 44"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_45_img_2.png",
+          "page": 45,
+          "description": "Image from page 45"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_47_img_2.jpeg",
+          "page": 47,
+          "description": "Image from page 47"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_48_img_2.jpeg",
+          "page": 48,
+          "description": "Image from page 48"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_49_img_2.jpeg",
+          "page": 49,
+          "description": "Image from page 49"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_50_img_2.jpeg",
+          "page": 50,
+          "description": "Image from page 50"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_51_img_2.jpeg",
+          "page": 51,
+          "description": "Image from page 51"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_52_img_2.jpeg",
+          "page": 52,
+          "description": "Image from page 52"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_53_img_2.jpeg",
+          "page": 53,
+          "description": "Image from page 53"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_54_img_2.jpeg",
+          "page": 54,
+          "description": "Image from page 54"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_55_img_2.jpeg",
+          "page": 55,
+          "description": "Image from page 55"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_57_img_2.jpeg",
+          "page": 57,
+          "description": "Image from page 57"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_58_img_2.jpeg",
+          "page": 58,
+          "description": "Image from page 58"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_59_img_2.jpeg",
+          "page": 59,
+          "description": "Image from page 59"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_60_img_2.png",
+          "page": 60,
+          "description": "Image from page 60"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_61_img_2.jpeg",
+          "page": 61,
+          "description": "Image from page 61"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_62_img_2.jpeg",
+          "page": 62,
+          "description": "Image from page 62"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_63_img_2.png",
+          "page": 63,
+          "description": "Image from page 63"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_64_img_2.jpeg",
+          "page": 64,
+          "description": "Image from page 64"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_65_img_2.png",
+          "page": 65,
+          "description": "Image from page 65"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_66_img_2.png",
+          "page": 66,
+          "description": "Image from page 66"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_67_img_2.jpeg",
+          "page": 67,
+          "description": "Image from page 67"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_68_img_2.jpeg",
+          "page": 68,
+          "description": "Image from page 68"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_69_img_2.jpeg",
+          "page": 69,
+          "description": "Image from page 69"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_70_img_2.jpeg",
+          "page": 70,
+          "description": "Image from page 70"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_71_img_2.jpeg",
+          "page": 71,
+          "description": "Image from page 71"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_72_img_2.jpeg",
+          "page": 72,
+          "description": "Image from page 72"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_75_img_2.jpeg",
+          "page": 75,
+          "description": "Image from page 75"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_76_img_2.jpeg",
+          "page": 76,
+          "description": "Image from page 76"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_77_img_2.jpeg",
+          "page": 77,
+          "description": "Image from page 77"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_78_img_2.png",
+          "page": 78,
+          "description": "Image from page 78"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_79_img_2.png",
+          "page": 79,
+          "description": "Image from page 79"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_80_img_2.png",
+          "page": 80,
+          "description": "Image from page 80"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_81_img_2.png",
+          "page": 81,
+          "description": "Image from page 81"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_82_img_2.png",
+          "page": 82,
+          "description": "Image from page 82"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_83_img_2.png",
+          "page": 83,
+          "description": "Image from page 83"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_84_img_2.jpeg",
+          "page": 84,
+          "description": "Image from page 84"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_85_img_2.png",
+          "page": 85,
+          "description": "Image from page 85"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_86_img_2.png",
+          "page": 86,
+          "description": "Image from page 86"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_87_img_2.png",
+          "page": 87,
+          "description": "Image from page 87"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_88_img_2.png",
+          "page": 88,
+          "description": "Image from page 88"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_89_img_2.jpeg",
+          "page": 89,
+          "description": "Image from page 89"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_127_img_2.jpeg",
+          "page": 127,
+          "description": "Image from page 127"
+        },
+        {
+          "s3_path": "s3://wed-tsh-industries-text-extraction/conserve-two/20251010_161203_ee1d0d02_RareBeauty-Brand83/extracted_images/pdf_page_131_img_2.jpeg",
+          "page": 131,
+          "description": "Image from page 131"
+        }
+      ],
+      "mermaid_syntax": null
+    },
+    "content": {
+      "related_chunks": [],
+      "total_chunks": 0,
+      "full_content": ""
+    },
+    "analytics": {
+      "word_count": 0,
+      "character_count": 0,
+      "step_count": 0,
+      "complexity_score": 0,
+      "image_count": 58,
+      "has_mermaid_syntax": false
+    }
+  },
+  "metadata": {
+    "s3_key": "non_distinct_processes/conserve-two/2025/10/10/non-distinct_process_1_e835d3df.json",
+    "bucket": "wed-tsh-industries-text-extraction",
+    "size": 17301,
+    "last_modified": "2025-10-10T16:14:15+00:00",
+    "content_type": "application/json",
+    "etag": "b032b680e6a81fb78cd2f4b09d49a655",
+    "request_id": "8b1ef9a6-5603-4191-8672-909de7ed817a"
+  }
+}

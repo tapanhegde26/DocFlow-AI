@@ -1,0 +1,114 @@
+{
+  "Comment": "SOP vectorization state machine",
+  "StartAt": "ReadFromS3-NonProcess",
+  "States": {
+    "ReadFromS3-NonProcess": {
+      "Type": "Task",
+      "Resource": "${read_s3_nonprocess_lambda_arn}",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "ChunkSOP-NonProcess"
+    },
+    "ChunkSOP-NonProcess": {
+      "Type": "Task",
+      "Resource": "${chunk_nonprocess_lambda_arn}",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "GenerateEmbedding-NonProcess"
+    },
+    "GenerateEmbedding-NonProcess": {
+      "Type": "Task",
+      "Resource": "${embed_nonprocess_lambda_arn}",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "StoreToVectorDB-NonProcess"
+    },
+    "StoreToVectorDB-NonProcess": {
+      "Type": "Task",
+      "Resource": "${store_nonprocess_lambda_arn}",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "SyncBedRockKB"
+    },
+    "SyncBedRockKB": {
+      "Type": "Task",
+      "Resource": "${bedrock_sync_lambda_arn}",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "Success"
+    },
+    "Success": {
+      "Type": "Succeed",
+      "Comment": "Workflow completed successfully"
+    },
+    "HandleError": {
+      "Type": "Fail",
+      "Comment": "Workflow failed with error"
+    }
+  }
+}

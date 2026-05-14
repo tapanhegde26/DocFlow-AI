@@ -1,0 +1,46 @@
+# k8s/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: genai-pipeline
+
+resources:
+  - base/namespace.yaml
+  - base/configmap.yaml
+  - services/text-extraction/deployment.yaml
+  - services/semantic-chunking/deployment.yaml
+  - services/llm-tagging/deployment.yaml
+  - services/chunk-sop/deployment.yaml
+  - services/generate-embedding/deployment.yaml
+  - services/store-to-vector-db/deployment.yaml
+
+commonLabels:
+  app.kubernetes.io/part-of: genai-pipeline
+  app.kubernetes.io/managed-by: kustomize
+
+images:
+  - name: ARTIFACT_REGISTRY_URL/text-extraction
+    newName: us-central1-docker.pkg.dev/PROJECT_ID/REPO_NAME/text-extraction
+    newTag: latest
+  - name: ARTIFACT_REGISTRY_URL/semantic-chunking
+    newName: us-central1-docker.pkg.dev/PROJECT_ID/REPO_NAME/semantic-chunking
+    newTag: latest
+  - name: ARTIFACT_REGISTRY_URL/llm-tagging
+    newName: us-central1-docker.pkg.dev/PROJECT_ID/REPO_NAME/llm-tagging
+    newTag: latest
+  - name: ARTIFACT_REGISTRY_URL/chunk-sop
+    newName: us-central1-docker.pkg.dev/PROJECT_ID/REPO_NAME/chunk-sop
+    newTag: latest
+  - name: ARTIFACT_REGISTRY_URL/generate-embedding
+    newName: us-central1-docker.pkg.dev/PROJECT_ID/REPO_NAME/generate-embedding
+    newTag: latest
+  - name: ARTIFACT_REGISTRY_URL/store-to-vector-db
+    newName: us-central1-docker.pkg.dev/PROJECT_ID/REPO_NAME/store-to-vector-db
+    newTag: latest
+
+configMapGenerator:
+  - name: genai-pipeline-config
+    behavior: merge
+    literals:
+      - GCP_PROJECT=PROJECT_ID
+      - REGION=us-central1

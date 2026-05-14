@@ -1,0 +1,166 @@
+# k8s/services/chunk-sop/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chunk-sop
+  namespace: genai-pipeline
+  labels:
+    app: chunk-sop
+    app.kubernetes.io/name: chunk-sop
+    app.kubernetes.io/component: vectorization
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: chunk-sop
+  template:
+    metadata:
+      labels:
+        app: chunk-sop
+        app.kubernetes.io/name: chunk-sop
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      serviceAccountName: genai-workload-sa
+      
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: cloud.google.com/gke-spot
+                operator: In
+                values:
+                - "true"
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: chunk-sop
+              topologyKey: kubernetes.io/hostname
+      
+      tolerations:
+      - key: "cloud.google.com/gke-spot"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      
+      terminationGracePeriodSeconds: 60
+      
+      containers:
+      - name: chunk-sop
+        image: ARTIFACT_REGISTRY_URL/chunk-sop:latest
+        imagePullPolicy: Always
+        
+        ports:
+        - containerPort: 8080
+          name: http
+        
+        envFrom:
+        - configMapRef:
+            name: genai-pipeline-config
+        
+        env:
+        - name: GCP_PROJECT
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CHUNK_SIZE
+          value: "500"
+        - name: CHUNK_OVERLAP
+          value: "50"
+        
+        resources:
+          requests:
+            cpu: "500m"
+            memory: 1Gi
+          limits:
+            cpu: "1"
+            memory: 2Gi
+        
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 5"]
+        
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chunk-sop
+  namespace: genai-pipeline
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: chunk-sop
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: chunk-sop-hpa
+  namespace: genai-pipeline
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: chunk-sop
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 180
+    scaleUp:
+      stabilizationWindowSeconds: 30
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: chunk-sop-pdb
+  namespace: genai-pipeline
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: chunk-sop

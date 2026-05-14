@@ -1,0 +1,171 @@
+# k8s/services/semantic-chunking/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: semantic-chunking
+  namespace: genai-pipeline
+  labels:
+    app: semantic-chunking
+    app.kubernetes.io/name: semantic-chunking
+    app.kubernetes.io/component: pre-formatting
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: semantic-chunking
+  template:
+    metadata:
+      labels:
+        app: semantic-chunking
+        app.kubernetes.io/name: semantic-chunking
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      serviceAccountName: genai-workload-sa
+      priorityClassName: genai-high-priority
+      
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: cloud.google.com/gke-spot
+                operator: In
+                values:
+                - "true"
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: semantic-chunking
+              topologyKey: kubernetes.io/hostname
+      
+      tolerations:
+      - key: "cloud.google.com/gke-spot"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      
+      terminationGracePeriodSeconds: 120
+      
+      containers:
+      - name: semantic-chunking
+        image: ARTIFACT_REGISTRY_URL/semantic-chunking:latest
+        imagePullPolicy: Always
+        
+        ports:
+        - containerPort: 8080
+          name: http
+        
+        envFrom:
+        - configMapRef:
+            name: genai-pipeline-config
+        
+        env:
+        - name: GCP_PROJECT
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: VERTEX_MODEL_ID
+          value: "gemini-1.5-pro"
+        
+        resources:
+          requests:
+            cpu: "1"
+            memory: 4Gi
+          limits:
+            cpu: "2"
+            memory: 8Gi
+        
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 15"]
+        
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: semantic-chunking
+  namespace: genai-pipeline
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: semantic-chunking
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: semantic-chunking-hpa
+  namespace: genai-pipeline
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: semantic-chunking
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 60
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 70
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      stabilizationWindowSeconds: 30
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: semantic-chunking-pdb
+  namespace: genai-pipeline
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: semantic-chunking

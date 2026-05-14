@@ -1,0 +1,8 @@
+# Detect File Type Service Requirements
+
+fastapi>=0.109.0
+uvicorn>=0.27.0
+pydantic>=2.5.0
+python-magic>=0.4.27
+google-cloud-storage>=2.14.0
+structlog>=24.1.0

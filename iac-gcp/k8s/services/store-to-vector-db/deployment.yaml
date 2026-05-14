@@ -1,0 +1,171 @@
+# k8s/services/store-to-vector-db/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: store-to-vector-db
+  namespace: genai-pipeline
+  labels:
+    app: store-to-vector-db
+    app.kubernetes.io/name: store-to-vector-db
+    app.kubernetes.io/component: vectorization
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: store-to-vector-db
+  template:
+    metadata:
+      labels:
+        app: store-to-vector-db
+        app.kubernetes.io/name: store-to-vector-db
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      serviceAccountName: genai-workload-sa
+      priorityClassName: genai-high-priority
+      
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: cloud.google.com/gke-spot
+                operator: In
+                values:
+                - "true"
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: store-to-vector-db
+              topologyKey: kubernetes.io/hostname
+      
+      tolerations:
+      - key: "cloud.google.com/gke-spot"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      
+      terminationGracePeriodSeconds: 90
+      
+      containers:
+      - name: store-to-vector-db
+        image: ARTIFACT_REGISTRY_URL/store-to-vector-db:latest
+        imagePullPolicy: Always
+        
+        ports:
+        - containerPort: 8080
+          name: http
+        
+        envFrom:
+        - configMapRef:
+            name: genai-pipeline-config
+        
+        env:
+        - name: GCP_PROJECT
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: VECTOR_SEARCH_INDEX_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: genai-pipeline-config
+              key: VECTOR_SEARCH_INDEX_ENDPOINT
+              optional: true
+        - name: BATCH_SIZE
+          value: "50"
+        
+        resources:
+          requests:
+            cpu: "1"
+            memory: 2Gi
+          limits:
+            cpu: "2"
+            memory: 4Gi
+        
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 15"]
+        
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: store-to-vector-db
+  namespace: genai-pipeline
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: store-to-vector-db
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: store-to-vector-db-hpa
+  namespace: genai-pipeline
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: store-to-vector-db
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      stabilizationWindowSeconds: 30
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: store-to-vector-db-pdb
+  namespace: genai-pipeline
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: store-to-vector-db

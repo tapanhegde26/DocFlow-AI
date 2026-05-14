@@ -1,0 +1,74 @@
+{
+  "Comment": "Process uploaded documents from s3",
+  "StartAt": "ReadProcessFromS3",
+  "States": {
+    "ReadProcessFromS3": {
+      "Type": "Task",
+      "Resource": "${read_process_from_s3_lambda_arn}",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "LLMBasedTagging"
+    },
+    "LLMBasedTagging": {
+      "Type": "Task",
+      "Resource": "${llm_based_tagging_lambda_arn}",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "AddLLMTagsToProcessedDocs"
+    },
+    "AddLLMTagsToProcessedDocs": {
+      "Type": "Task",
+      "Resource": "${add_LLMTags_To_ProcessedDocs_lambda_arn}",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "Success"
+    },
+    "Success": {
+      "Type": "Succeed",
+      "Comment": "Workflow completed successfully"
+    },
+    "HandleError": {
+      "Type": "Fail",
+      "Comment": "Workflow failed with error"
+    }
+  }
+}

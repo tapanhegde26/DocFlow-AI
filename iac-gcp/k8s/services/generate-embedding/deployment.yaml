@@ -1,0 +1,184 @@
+# k8s/services/generate-embedding/deployment.yaml
+# This is the highest volume service - needs careful scaling
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: generate-embedding
+  namespace: genai-pipeline
+  labels:
+    app: generate-embedding
+    app.kubernetes.io/name: generate-embedding
+    app.kubernetes.io/component: vectorization
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: generate-embedding
+  template:
+    metadata:
+      labels:
+        app: generate-embedding
+        app.kubernetes.io/name: generate-embedding
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      serviceAccountName: genai-workload-sa
+      priorityClassName: genai-high-priority
+      
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: cloud.google.com/gke-spot
+                operator: In
+                values:
+                - "true"
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app: generate-embedding
+            topologyKey: kubernetes.io/hostname
+      
+      tolerations:
+      - key: "cloud.google.com/gke-spot"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      
+      terminationGracePeriodSeconds: 90
+      
+      containers:
+      - name: generate-embedding
+        image: ARTIFACT_REGISTRY_URL/generate-embedding:latest
+        imagePullPolicy: Always
+        
+        ports:
+        - containerPort: 8080
+          name: http
+        
+        envFrom:
+        - configMapRef:
+            name: genai-pipeline-config
+        
+        env:
+        - name: GCP_PROJECT
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: VERTEX_EMBEDDING_MODEL
+          value: "text-embedding-004"
+        - name: BATCH_SIZE
+          value: "100"
+        
+        resources:
+          requests:
+            cpu: "1"
+            memory: 4Gi
+          limits:
+            cpu: "2"
+            memory: 8Gi
+        
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 15"]
+        
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: generate-embedding
+  namespace: genai-pipeline
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: generate-embedding
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: generate-embedding-hpa
+  namespace: genai-pipeline
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: generate-embedding
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 60
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 70
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 15
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+      - type: Pods
+        value: 4
+        periodSeconds: 15
+      selectPolicy: Max
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: generate-embedding-pdb
+  namespace: genai-pipeline
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: generate-embedding

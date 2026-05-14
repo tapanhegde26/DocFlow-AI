@@ -1,0 +1,543 @@
+{
+  "ExecutedVersion": "$LATEST",
+  "Payload": {
+    "success": true,
+    "chunks": [
+      {
+        "chunk_id": "llm_tags_chunk",
+        "content": "LLM Generated Tags for this process: Returns, E-commerce, Refunds, Order Management, Workflow. These tags were automatically generated to help categorize and search for this process. Total tags: 5",
+        "metadata": {
+          "chunk_index": 0,
+          "chunk_type": "llm_tags",
+          "tags": [
+            "Returns",
+            "E-commerce",
+            "Refunds",
+            "Order Management",
+            "Workflow"
+          ],
+          "tags_count": 5,
+          "start_position": 0,
+          "end_position": 196,
+          "chunk_size": 196,
+          "is_tagging_reference": true
+        }
+      },
+      {
+        "chunk_id": "tag_categories_chunk",
+        "content": "Tag Categories for this process: Process_Type: Workflow; Subject_Matter: Order Management; Priority: Workflow; Other: Returns, E-commerce, Refunds. These categorized tags help organize and filter processes by type, department, and subject matter.",
+        "metadata": {
+          "chunk_index": 1,
+          "chunk_type": "tag_categories",
+          "categories": {
+            "process_type": [
+              "Workflow"
+            ],
+            "subject_matter": [
+              "Order Management"
+            ],
+            "priority": [
+              "Workflow"
+            ],
+            "other": [
+              "Returns",
+              "E-commerce",
+              "Refunds"
+            ]
+          },
+          "categories_count": 4,
+          "start_position": 0,
+          "end_position": 246,
+          "chunk_size": 246,
+          "is_tagging_reference": true
+        }
+      },
+      {
+        "chunk_id": "tagging_info_chunk",
+        "content": "Tagging Information: This process was tagged using anthropic.claude-3-sonnet-20240229-v1:0 on 2025-10-09T10:52:04.563328. Tagging status: completed. Total tags generated: 5. Original location: processes/conserve-one/2025/10/09/returns_and_exchanges_process_ff7b6762.json",
+        "metadata": {
+          "chunk_index": 2,
+          "chunk_type": "tagging_info",
+          "tagging_info": {
+            "llm_model_used": "anthropic.claude-3-sonnet-20240229-v1:0",
+            "tagging_timestamp": "2025-10-09T10:52:04.563328",
+            "tags_count": 5,
+            "tagging_status": "completed",
+            "original_object_key": "processes/conserve-one/2025/10/09/returns_and_exchanges_process_ff7b6762.json"
+          },
+          "start_position": 0,
+          "end_position": 270,
+          "chunk_size": 270,
+          "is_tagging_reference": true
+        }
+      },
+      {
+        "chunk_id": "text_chunk_0",
+        "content": "Process: Returns and Exchanges Process\n\nProcess ID: process_2\n\nProcess UUID: ff7b6762-cb7b-4e9d-a136-d4c370066318\n\nCreated: 2025-10-09T10:51:59.351389\n\nSource File Type: pdf\n\nOriginal Filename: s3://wed-tsh-industries-raw-sop-upload/raw_files/conserve-one/RareBeauty-Brand77.pdf\n\nS3 Location: conserve-one/distinct_processes/20251009_105158_c86cd2aa_unknown_file_distinct_processes.json\n\nExtraction Method: automated\n\nChunking Method: semantic\n\nIdentification Method: bedrock_claude\n\nProcess Name: Returns",
+        "metadata": {
+          "chunk_index": 0,
+          "chunk_type": "text_content",
+          "start_position": 0,
+          "end_position": 500,
+          "chunk_size": 500,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": false,
+          "image_ref_count": 0,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_1",
+        "content": "tion Method: bedrock_claude\n\nProcess Name: Returns and Exchanges Process\n\nDescription: This process outlines the various scenarios and steps for handling product returns and exchanges from RareBeauty.com orders, including issuance of refunds, store credits, and processing exchanges.\n\nCategory: workflow\n\nProcess Steps:\n\nStep 1: 1. Return item, refund issued to original payment method.\n\nStep 2: 2. Return item, refund issued to RB.com store credit.\n\nStep 3: 3. Exchange item for same item, different",
+        "metadata": {
+          "chunk_index": 1,
+          "chunk_type": "text_content",
+          "start_position": 450,
+          "end_position": 950,
+          "chunk_size": 500,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": false,
+          "image_ref_count": 0,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_2",
+        "content": "Step 3: 3. Exchange item for same item, different shade.\n\nStep 4: 4. Exchange item for exact same item (same shade).\n\nStep 5: 5. Exchange item for lesser valued item, gets remaining amount via store credit.\n\nStep 6: 6. Exchange item for lesser valued item, gets remaining amount via refund to original payment method.\n\nStep 7: 7. Exchange item for higher valued item, customer pays for price difference.\n\nSection Location: Returns\n\nOrganization Pattern: sequential\n\nRelated Pages: 28, 29, 30, 31, 32",
+        "metadata": {
+          "chunk_index": 2,
+          "chunk_type": "text_content",
+          "start_position": 900,
+          "end_position": 1400,
+          "chunk_size": 499,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": false,
+          "image_ref_count": 0,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_3",
+        "content": "ern: sequential\n\nRelated Pages: 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53\n\n==================================================\n\nIMAGE REFERENCES SECTION\n\n==================================================\n\nIMAGE_REF_1: Page 36 - Image from page 36 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_36_img_2.png\n\nIMAGE_REF_2: Page 37 - Image from page 37 - Location",
+        "metadata": {
+          "chunk_index": 3,
+          "chunk_type": "text_content",
+          "start_position": 1350,
+          "end_position": 1850,
+          "chunk_size": 500,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": true,
+          "image_ref_count": 2,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_4",
+        "content": "AGE_REF_2: Page 37 - Image from page 37 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_37_img_2.jpeg\n\nIMAGE_REF_3: Page 38 - Image from page 38 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_38_img_2.png\n\nIMAGE_REF_4: Page 39 - Image from page 39 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_Ra",
+        "metadata": {
+          "chunk_index": 4,
+          "chunk_type": "text_content",
+          "start_position": 1800,
+          "end_position": 2300,
+          "chunk_size": 500,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": true,
+          "image_ref_count": 2,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_5",
+        "content": "xtraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_39_img_2.jpeg\n\nIMAGE_REF_5: Page 40 - Image from page 40 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_40_img_2.jpeg\n\nIMAGE_REF_6: Page 41 - Image from page 41 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_41_img_2.png\n\nIMAGE_REF_7: Page 4",
+        "metadata": {
+          "chunk_index": 5,
+          "chunk_type": "text_content",
+          "start_position": 2250,
+          "end_position": 2750,
+          "chunk_size": 500,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": true,
+          "image_ref_count": 3,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_6",
+        "content": "_images/pdf_page_41_img_2.png\n\nIMAGE_REF_7: Page 42 - Image from page 42 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_42_img_2.jpeg\n\nIMAGE_REF_8: Page 43 - Image from page 43 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_43_img_2.jpeg\n\nIMAGE_REF_9: Page 44 - Image from page 44 - Location: s3://wed-tsh-industries-text-extraction/conser",
+        "metadata": {
+          "chunk_index": 6,
+          "chunk_type": "text_content",
+          "start_position": 2700,
+          "end_position": 3200,
+          "chunk_size": 500,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": true,
+          "image_ref_count": 3,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_7",
+        "content": "ocation: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_44_img_2.jpeg\n\nIMAGE_REF_10: Page 45 - Image from page 45 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_45_img_2.png\n\nIMAGE_REF_11: Page 47 - Image from page 47 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_pag",
+        "metadata": {
+          "chunk_index": 7,
+          "chunk_type": "text_content",
+          "start_position": 3150,
+          "end_position": 3650,
+          "chunk_size": 500,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": true,
+          "image_ref_count": 2,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_8",
+        "content": "9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_47_img_2.jpeg\n\nIMAGE_REF_12: Page 48 - Image from page 48 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_48_img_2.jpeg\n\nIMAGE_REF_13: Page 49 - Image from page 49 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_49_img_2.jpeg\n\nIMAGE_REF_14: Page 50 - Image from page 50 - Location: s3",
+        "metadata": {
+          "chunk_index": 8,
+          "chunk_type": "text_content",
+          "start_position": 3600,
+          "end_position": 4100,
+          "chunk_size": 500,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": true,
+          "image_ref_count": 3,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_9",
+        "content": "EF_14: Page 50 - Image from page 50 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_50_img_2.jpeg\n\nIMAGE_REF_15: Page 51 - Image from page 51 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_51_img_2.jpeg\n\nIMAGE_REF_16: Page 52 - Image from page 52 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_Rar",
+        "metadata": {
+          "chunk_index": 9,
+          "chunk_type": "text_content",
+          "start_position": 4050,
+          "end_position": 4550,
+          "chunk_size": 500,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": true,
+          "image_ref_count": 2,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_10",
+        "content": "traction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_52_img_2.jpeg\n\nIMAGE_REF_17: Page 53 - Image from page 53 - Location: s3://wed-tsh-industries-text-extraction/conserve-one/20251009_104834_9a9a3bec_RareBeauty-Brand77/extracted_images/pdf_page_53_img_2.jpeg\n\n==================================================\n\nEND IMAGE REFERENCES (17 total)\n\n==================================================\n\n==================================================\n\nPROCESS FLOW DIA",
+        "metadata": {
+          "chunk_index": 10,
+          "chunk_type": "text_content",
+          "start_position": 4500,
+          "end_position": 5000,
+          "chunk_size": 500,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": true,
+          "image_ref_count": 1,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_11",
+        "content": "================================\n\nPROCESS FLOW DIAGRAM (MERMAID)\n\n==================================================\n\nMermaid Flowchart Syntax:\n\nflowchart TD\n    Start([Start: Returns and Exchanges Process])\n    Step1[\"1: Return item, refund issued to original payment method.\"]\n    Start --> Step1\n    Step2[\"2: Return item, refund issued to RB.com store credit.\"]\n    Step1 --> Step2\n    Step3[\"3: Exchange item for same item, different shade.\"]\n    Step2 --> Step3\n    Step4[\"4: Exchange item for",
+        "metadata": {
+          "chunk_index": 11,
+          "chunk_type": "text_content",
+          "start_position": 4950,
+          "end_position": 5450,
+          "chunk_size": 499,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": false,
+          "image_ref_count": 0,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_12",
+        "content": "Step2 --> Step3\n    Step4[\"4: Exchange item for exact same item (same shade).\"]\n    Step3 --> Step4\n    Step5[\"5: Exchange item for lesser valued item, gets remaining amount via store credit.\"]\n    Step4 --> Step5\n    Step6[\"6: Exchange item for lesser valued item, gets remaining amount via refund to ori...\"]\n    Step5 --> Step6\n    Step7[\"7: Exchange item for higher valued item, customer pays for price difference.\"]\n    Step6 --> Step7\n    End([Process Complete])\n    Step7 --> End\n\n    classD",
+        "metadata": {
+          "chunk_index": 12,
+          "chunk_type": "text_content",
+          "start_position": 5400,
+          "end_position": 5900,
+          "chunk_size": 498,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": false,
+          "image_ref_count": 0,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_13",
+        "content": "([Process Complete])\n    Step7 --> End\n\n    classDef startEnd fill:#e1f5fe,stroke:#01579b,stroke-width:2px\n    classDef processStep fill:#f3e5f5,stroke:#4a148c,stroke-width:2px\n    class Start,End startEnd\n    class Step1,Step2,Step3,Step4,Step5,Step6,Step7 processStep\n\n==================================================\n\nEND PROCESS FLOW DIAGRAM\n\n==================================================\n\nDocument Analytics - Word Count: 0, Character Count: 0, Step Count: 7, Complexity Score: 2.1, Image",
+        "metadata": {
+          "chunk_index": 13,
+          "chunk_type": "text_content",
+          "start_position": 5850,
+          "end_position": 6350,
+          "chunk_size": 500,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": false,
+          "image_ref_count": 0,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_14",
+        "content": "nt: 0, Step Count: 7, Complexity Score: 2.1, Image Count: 17\n\n==================================================\n\nLLM TAGS SECTION\n\n==================================================\n\nLLM Generated Tags (5 total):\n\nReturns, E-commerce, Refunds, Order Management, Workflow\n\nTag_1: Returns\n\nTag_2: E-commerce\n\nTag_3: Refunds\n\nTag_4: Order Management\n\nTag_5: Workflow\n\nTAG CATEGORIES:\n\nPROCESS_TYPE: Workflow\n\nCategory_process_type: Workflow\n\nSUBJECT_MATTER: Order Management\n\nCategory_subject_matter: O",
+        "metadata": {
+          "chunk_index": 14,
+          "chunk_type": "text_content",
+          "start_position": 6300,
+          "end_position": 6800,
+          "chunk_size": 500,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": false,
+          "image_ref_count": 0,
+          "contains_llm_tags": true,
+          "llm_tag_count": 5,
+          "category_ref_count": 2,
+          "contains_tagging_sections": true
+        }
+      },
+      {
+        "chunk_id": "text_chunk_15",
+        "content": "TTER: Order Management\n\nCategory_subject_matter: Order Management\n\nPRIORITY: Workflow\n\nCategory_priority: Workflow\n\nOTHER: Returns, E-commerce, Refunds\n\nCategory_other: Returns\n\nCategory_other: E-commerce\n\nCategory_other: Refunds\n\nTAGGING METADATA:\n\nLLM Model Used: anthropic.claude-3-sonnet-20240229-v1:0\n\nTagging Timestamp: 2025-10-09T10:52:04.563328\n\nTags Count: 5\n\nTagging Status: completed\n\nOriginal Object Key: processes/conserve-one/2025/10/09/returns_and_exchanges_process_ff7b6762.json\n\n====",
+        "metadata": {
+          "chunk_index": 15,
+          "chunk_type": "text_content",
+          "start_position": 6750,
+          "end_position": 7250,
+          "chunk_size": 500,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": false,
+          "image_ref_count": 0,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 5,
+          "contains_tagging_sections": false
+        }
+      },
+      {
+        "chunk_id": "text_chunk_16",
+        "content": "/returns_and_exchanges_process_ff7b6762.json\n\n==================================================\n\nEND TAGGING INFORMATION\n\n==================================================",
+        "metadata": {
+          "chunk_index": 16,
+          "chunk_type": "text_content",
+          "start_position": 7200,
+          "end_position": 7373,
+          "chunk_size": 173,
+          "total_text_length": 7373,
+          "is_image_reference": false,
+          "contains_image_refs": false,
+          "image_ref_count": 0,
+          "contains_llm_tags": false,
+          "llm_tag_count": 0,
+          "category_ref_count": 0,
+          "contains_tagging_sections": false
+        }
+      }
+    ],
+    "metadata": {
+      "total_chunks": 20,
+      "text_chunks": 17,
+      "image_chunks": 0,
+      "tagging_chunks": 3,
+      "text_chunks_with_image_refs": 8,
+      "text_chunks_with_tag_refs": 1,
+      "total_image_refs_in_text_chunks": 18,
+      "total_tag_refs_in_text_chunks": 5,
+      "original_content_type": "dict",
+      "chunk_size": 500,
+      "chunk_overlap": 50,
+      "original_text_length": 7373,
+      "image_references_included": true,
+      "tagging_info_included": true,
+      "separate_image_chunks": false,
+      "separate_tagging_chunks": true,
+      "request_id": "0dabd0b5-a3fd-42b0-ab55-804ea4e4ebd6",
+      "processing_summary": {
+        "environment_settings": {
+          "include_image_refs": true,
+          "include_tagging_info": true,
+          "separate_image_chunks": false,
+          "separate_tagging_chunks": true
+        },
+        "image_processing_results": {
+          "input_image_count": 17,
+          "extracted_image_refs": 17,
+          "final_image_refs_in_chunks": 18,
+          "processing_successful": true
+        },
+        "tagging_processing_results": {
+          "input_tags_count": 5,
+          "input_categories_count": 4,
+          "extracted_tag_refs": 5,
+          "extracted_tagging_sections": 1,
+          "final_tag_refs_in_chunks": 8,
+          "processing_successful": true
+        },
+        "content_analysis": {
+          "has_process_details": true,
+          "has_image_references": true,
+          "has_llm_tags": true,
+          "has_tag_categories": true,
+          "has_tagging_info": true
+        }
+      }
+    },
+    "original_metadata": {
+      "process_uuid": "ff7b6762-cb7b-4e9d-a136-d4c370066318",
+      "process_id": "process_2",
+      "process_name": "Returns and Exchanges Process",
+      "created_timestamp": "2025-10-09T10:51:59.351389",
+      "client_name": "conserve-one",
+      "timestamp_text_extraction": "2025-10-09T10:49:02.769755",
+      "timestamp_text_standardization": "2025-10-09T10:49:03.730385",
+      "timestamp_semantic_chunking": "2025-10-09T10:49:04.708135",
+      "timestamp_identify_processes": "",
+      "timestamp_create_process_docs": "2025-10-09T10:51:59.241795",
+      "source_file": {
+        "original_filename": "s3://wed-tsh-industries-raw-sop-upload/raw_files/conserve-one/RareBeauty-Brand77.pdf",
+        "file_type": "pdf",
+        "s3_bucket": "wed-tsh-industries-text-extraction",
+        "s3_key": "conserve-one/distinct_processes/20251009_105158_c86cd2aa_unknown_file_distinct_processes.json"
+      },
+      "processing_info": {
+        "extraction_method": "automated",
+        "chunking_method": "semantic",
+        "identification_method": "bedrock_claude"
+      }
+    },
+    "original_llm_tags": [
+      "Returns",
+      "E-commerce",
+      "Refunds",
+      "Order Management",
+      "Workflow"
+    ],
+    "original_tag_categories": {
+      "process_type": [
+        "Workflow"
+      ],
+      "subject_matter": [
+        "Order Management"
+      ],
+      "priority": [
+        "Workflow"
+      ],
+      "other": [
+        "Returns",
+        "E-commerce",
+        "Refunds"
+      ]
+    },
+    "original_tagging_info": {
+      "llm_model_used": "anthropic.claude-3-sonnet-20240229-v1:0",
+      "tagging_timestamp": "2025-10-09T10:52:04.563328",
+      "tags_count": 5,
+      "tagging_status": "completed",
+      "original_object_key": "processes/conserve-one/2025/10/09/returns_and_exchanges_process_ff7b6762.json"
+    }
+  },
+  "SdkHttpMetadata": {
+    "AllHttpHeaders": {
+      "X-Amz-Executed-Version": [
+        "$LATEST"
+      ],
+      "x-amzn-Remapped-Content-Length": [
+        "0"
+      ],
+      "Connection": [
+        "keep-alive"
+      ],
+      "x-amzn-RequestId": [
+        "0dabd0b5-a3fd-42b0-ab55-804ea4e4ebd6"
+      ],
+      "Content-Length": [
+        "19611"
+      ],
+      "Date": [
+        "Thu, 09 Oct 2025 10:52:06 GMT"
+      ],
+      "X-Amzn-Trace-Id": [
+        "Root=1-68e793d5-3b4538db61007380a5474084;Parent=612a5df0b9b7315e;Sampled=0;Lineage=2:28d325b7:0"
+      ],
+      "Content-Type": [
+        "application/json"
+      ]
+    },
+    "HttpHeaders": {
+      "Connection": "keep-alive",
+      "Content-Length": "19611",
+      "Content-Type": "application/json",
+      "Date": "Thu, 09 Oct 2025 10:52:06 GMT",
+      "X-Amz-Executed-Version": "$LATEST",
+      "x-amzn-Remapped-Content-Length": "0",
+      "x-amzn-RequestId": "0dabd0b5-a3fd-42b0-ab55-804ea4e4ebd6",
+      "X-Amzn-Trace-Id": "Root=1-68e793d5-3b4538db61007380a5474084;Parent=612a5df0b9b7315e;Sampled=0;Lineage=2:28d325b7:0"
+    },
+    "HttpStatusCode": 200
+  },
+  "SdkResponseMetadata": {
+    "RequestId": "0dabd0b5-a3fd-42b0-ab55-804ea4e4ebd6"
+  },
+  "StatusCode": 200
+}

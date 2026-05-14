@@ -1,0 +1,26 @@
+# k8s/base/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: genai-pipeline-config
+  namespace: genai-pipeline
+data:
+  LOG_LEVEL: "INFO"
+  REGION: "us-central1"
+  USE_VERTEX_AI: "true"
+  VERTEX_MODEL_ID: "gemini-1.5-pro"
+  VERTEX_EMBEDDING_MODEL: "text-embedding-004"
+  CHUNK_SIZE: "500"
+  CHUNK_OVERLAP: "50"
+---
+# k8s/base/external-secrets.yaml
+# Note: This requires External Secrets Operator to be installed
+# For now, we'll use native K8s secrets synced from Secret Manager
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gcp-credentials
+  namespace: genai-pipeline
+type: Opaque
+# Data will be populated by Workload Identity - no actual secrets stored here
+data: {}

@@ -1,0 +1,149 @@
+# Build function package with dependencies included using Docker
+resource "null_resource" "lambda_dependencies" {
+  triggers = {
+    requirements = filemd5("${path.module}/requirements.txt")
+    source_code  = filemd5("${path.module}/src/app.py")
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      cd ${path.module}
+      rm -rf lambda_package detect_file_type.zip
+      mkdir -p lambda_package
+      
+      # Install dependencies using Docker to ensure Linux compatibility
+      docker run --rm \
+        -v "$(pwd):/var/task" \
+        -w /var/task \
+        python:3.13-slim \
+        bash -c "pip install -r requirements.txt -t lambda_package/"
+      
+      # Copy source code
+      cp -r src/* lambda_package/
+      
+      # Clean up unnecessary files to reduce size
+      find lambda_package -name "*.pyc" -delete 2>/dev/null || true
+      find lambda_package -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+      find lambda_package -name "*.dist-info" -type d -exec rm -rf {} + 2>/dev/null || true
+      find lambda_package -name "tests" -type d -exec rm -rf {} + 2>/dev/null || true
+    EOT
+  }
+}
+
+data "archive_file" "lambda" {
+  type        = "zip"
+  source_dir  = "${path.module}/lambda_package"
+  output_path = "${path.module}/detect_file_type.zip"
+  depends_on  = [null_resource.lambda_dependencies]
+  excludes = [
+    "__pycache__",
+    "*.pyc",
+    "*.pyo",
+    "*.dist-info",
+    "tests"
+  ]
+}
+
+resource "aws_lambda_function" "detect_file_type" {
+  function_name = "${var.prefix}-preformat-detect-file-type"
+  role          = aws_iam_role.lambda_exec.arn
+  handler       = "app.handler"
+  runtime       = "python3.13"
+  timeout       = 30
+  filename      = data.archive_file.lambda.output_path
+  source_code_hash = data.archive_file.lambda.output_base64sha256
+
+  environment {
+   variables = var.environment_variables
+  }
+
+   tags = {
+    Environment = var.environment
+    Name = "AI-KB"
+  }
+}
+
+resource "aws_iam_role" "lambda_exec" {
+  name = "${var.prefix}-preformat-detect-file-type-role"
+
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+
+  tags = {
+    Environment = var.environment
+    Name     = "AI-KB"
+  }
+}
+
+data "aws_iam_policy_document" "lambda_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
+  
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_basic" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_policy" "lambda_s3_access" {
+  name = "${var.prefix}-lambda-s3-access"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:GetObject",
+          "s3:HeadObject"
+        ],
+        Resource = "arn:aws:s3:::${var.prefix}-raw-sop-upload/raw_files/*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:ListBucket"
+        ],
+        Resource = "arn:aws:s3:::${var.prefix}-raw-sop-upload",
+        Condition = {
+          StringLike = {
+            "s3:prefix" = ["raw_files/*"]
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_s3_access_attach" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = aws_iam_policy.lambda_s3_access.arn
+}
+
+/*
+resource "aws_lambda_permission" "allow_s3_invoke" {
+  statement_id  = "AllowExecutionFromS3Bucket"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.detect_file_type.function_name
+  principal     = "s3.amazonaws.com"
+  source_arn    = var.s3_bucket_arn  # Pass this from parent module
+}
+
+resource "aws_s3_bucket_notification" "trigger_lambda" {
+  bucket = var.s3_bucket_id  # Pass this from parent module
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.detect_file_type.arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = "raw_files/"
+    filter_suffix       = ""
+  }
+
+  depends_on = [aws_lambda_permission.allow_s3_invoke]
+}
+*/

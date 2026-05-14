@@ -1,0 +1,188 @@
+# k8s/services/text-extraction/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: text-extraction
+  namespace: genai-pipeline
+  labels:
+    app: text-extraction
+    app.kubernetes.io/name: text-extraction
+    app.kubernetes.io/component: pre-formatting
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: text-extraction
+  template:
+    metadata:
+      labels:
+        app: text-extraction
+        app.kubernetes.io/name: text-extraction
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      serviceAccountName: genai-workload-sa
+      
+      # Prefer spot nodes, fallback to on-demand
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: cloud.google.com/gke-spot
+                operator: In
+                values:
+                - "true"
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: text-extraction
+              topologyKey: kubernetes.io/hostname
+      
+      # Tolerate spot nodes
+      tolerations:
+      - key: "cloud.google.com/gke-spot"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      
+      # Graceful termination for spot preemption
+      terminationGracePeriodSeconds: 60
+      
+      containers:
+      - name: text-extraction
+        image: ARTIFACT_REGISTRY_URL/text-extraction:latest
+        imagePullPolicy: Always
+        
+        ports:
+        - containerPort: 8080
+          name: http
+        
+        envFrom:
+        - configMapRef:
+            name: genai-pipeline-config
+        
+        env:
+        - name: GCP_PROJECT
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        
+        resources:
+          requests:
+            cpu: "1"
+            memory: 2Gi
+          limits:
+            cpu: "2"
+            memory: 4Gi
+        
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        
+        # Handle SIGTERM gracefully for spot preemption
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 10"]
+        
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+      
+      # Pod disruption budget handled separately
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: text-extraction
+  namespace: genai-pipeline
+  labels:
+    app: text-extraction
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: text-extraction
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: text-extraction-hpa
+  namespace: genai-pipeline
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: text-extraction
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: text-extraction-pdb
+  namespace: genai-pipeline
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: text-extraction

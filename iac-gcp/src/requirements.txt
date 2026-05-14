@@ -1,0 +1,53 @@
+# GCP GenAI Pipeline - Python Requirements
+# Equivalent to AWS boto3-based requirements
+
+# Google Cloud SDKs
+google-cloud-storage>=2.14.0
+google-cloud-pubsub>=2.19.0
+google-cloud-secret-manager>=2.18.0
+google-cloud-logging>=3.9.0
+google-cloud-aiplatform>=1.42.0
+google-cloud-discoveryengine>=0.11.0
+google-cloud-run>=0.10.0
+google-cloud-workflows>=1.14.0
+
+# Vertex AI and GenAI
+vertexai>=1.42.0
+langchain>=0.1.0
+langchain-google-vertexai>=0.1.0
+langchain-google-genai>=0.0.11
+langgraph>=0.0.26
+
+# Database
+pg8000>=1.30.0
+cloud-sql-python-connector[pg8000]>=1.6.0
+sqlalchemy>=2.0.0
+
+# Document Processing
+pypdf>=3.17.0
+python-docx>=1.1.0
+openpyxl>=3.1.0
+python-pptx>=0.6.23
+unstructured>=0.12.0
+
+# Text Processing
+tiktoken>=0.5.0
+nltk>=3.8.0
+spacy>=3.7.0
+
+# HTTP and API
+fastapi>=0.109.0
+uvicorn>=0.27.0
+httpx>=0.26.0
+requests>=2.31.0
+
+# Utilities
+pydantic>=2.5.0
+python-dotenv>=1.0.0
+structlog>=24.1.0
+tenacity>=8.2.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.23.0
+pytest-cov>=4.1.0

@@ -1,0 +1,241 @@
+{
+  "Comment": "pre formatting state machine",
+  "StartAt": "DetectFileType",
+  "States": {
+    "DetectFileType": {
+      "Type": "Task",
+      "Resource": "${detect_file_type_lambda_arn}",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "RouteByFileType"
+    },
+    "RouteByFileType": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.body.file_type",
+          "StringEquals": "PDF",
+          "Next": "PDFTextExtraction"
+        },
+        {
+          "Or": [
+            {
+              "Variable": "$.body.file_type",
+              "StringEquals": "DOCX"
+            },
+            {
+              "Variable": "$.body.file_type",
+              "StringEquals": "XLSX"
+            },
+            {
+              "Variable": "$.body.file_type",
+              "StringEquals": "PPTX"
+            }
+          ],
+          "Next": "OfficeTextExtraction"
+        }
+      ],
+      "Default": "UnsupportedFileType"
+    },
+    "PDFTextExtraction": {
+      "Type": "Task",
+      "Resource": "${pdf_extract_lambda_arn}",
+      "ResultSelector": {
+        "statusCode.$": "$.statusCode",
+        "body.$": "$.body"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "CheckExtractionSuccess"
+    },
+    "OfficeTextExtraction": {
+      "Type": "Task",
+      "Resource": "${office_extract_lambda_arn}",
+      "ResultSelector": {
+        "statusCode.$": "$.statusCode",
+        "body.$": "$.body"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "CheckExtractionSuccess"
+    },
+    "CheckExtractionSuccess": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.body.status",
+          "StringEquals": "SUCCESS",
+          "Next": "DuplicateDetection"
+        }
+      ],
+      "Default": "HandleError"
+    },
+    "DuplicateDetection": {
+      "Type": "Task",
+      "Resource": "${duplicate_detection_lambda_arn}",
+      "ResultSelector": {
+        "statusCode.$": "$.statusCode",
+        "body.$": "$.body"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "CheckDuplicateDetectionSuccess"
+    },
+    "CheckDuplicateDetectionSuccess": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.statusCode",
+          "NumericEquals": 200,
+          "Next": "TextStandardization"
+        }
+      ],
+      "Default": "HandleError"
+    },
+    "TextStandardization": {
+      "Type": "Task",
+      "Resource": "${text_standardize_lambda_arn}",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "SemanticChunking"
+    },
+    "SemanticChunking": {
+      "Type": "Task",
+      "Resource": "${semantic_chunking_lambda_arn}",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "IdentifyDistinctProcess"
+    },
+    "IdentifyDistinctProcess": {
+      "Type": "Task",
+      "Resource": "${identify_distinct_process_lambda_arn}",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "CreateProcessDocs"
+    },
+    "CreateProcessDocs": {
+      "Type": "Task",
+      "Resource": "${create_process_docs_lambda_arn}",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandleError",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "Success"
+    },
+    "UnsupportedFileType": {
+      "Type": "Fail",
+      "Cause": "Unsupported file type",
+      "Error": "UnsupportedFileTypeError"
+    },
+    "Success": {
+      "Type": "Succeed",
+      "Comment": "Workflow completed successfully"
+    },
+    "HandleError": {
+      "Type": "Fail",
+      "Comment": "Workflow failed with error"
+    }
+  }
+}

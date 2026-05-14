@@ -1,0 +1,4 @@
+boto3
+opensearch-py
+requests-aws4auth
+urllib3<2.0

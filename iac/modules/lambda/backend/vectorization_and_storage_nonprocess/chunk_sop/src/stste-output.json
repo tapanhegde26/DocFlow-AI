@@ -1,0 +1,22 @@
+{
+  "success": true,
+  "chunks": [],
+  "metadata": {
+    "total_chunks": 0,
+    "text_chunks": 0,
+    "image_chunks": 0,
+    "tagging_chunks": 0,
+    "original_content_type": "dict",
+    "image_references_included": true,
+    "tagging_info_included": true,
+    "separate_image_chunks": false,
+    "separate_tagging_chunks": true,
+    "request_id": "c0acb319-fc20-4145-be47-2ddf1f39ce8d",
+    "text_extraction_length": 0,
+    "input_image_count": 0,
+    "input_tags_count": 0,
+    "input_categories_count": 0,
+    "extracted_image_refs": 0,
+    "extracted_tag_refs": 0
+  }
+}
