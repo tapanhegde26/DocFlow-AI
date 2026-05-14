@@ -1,0 +1,12 @@
+# DocFlow AI - Code Owners
+# These owners will be automatically requested for review on PRs
+
+# Default owner for everything
+* @tapanhegde26
+
+# Infrastructure specific owners
+/iac/ @tapanhegde26
+/iac-gcp/ @tapanhegde26
+
+# Documentation
+*.md @tapanhegde26
