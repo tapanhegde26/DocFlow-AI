@@ -1,4 +1,4 @@
-# GenAI Document Processing Pipeline
+# DocFlow-AI : GenAI Document Processing Pipeline
 
 A production-ready, multi-cloud GenAI data ingestion pipeline for document processing, LLM-based tagging, and RAG (Retrieval-Augmented Generation) implementation. This project demonstrates enterprise-grade infrastructure as code with deployments on both **AWS** and **Google Cloud Platform (GCP)**.
 
